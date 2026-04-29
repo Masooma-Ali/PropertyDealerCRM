@@ -63,9 +63,14 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    localStorage.removeItem('token');
-    setUser(null);
-    router.push('/login');
+    //localStorage.removeItem('token');
+    //setUser(null);
+    //router.push('/login');
+     // Call backend to clear the cookie
+  await fetch('/api/auth/logout', { method: 'POST' });
+  localStorage.removeItem('token');
+  setUser(null);
+  router.push('/login');
   }
 
   return (

@@ -1,26 +1,21 @@
 'use client';
 import { useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
 
 export function useSocket(onEvent) {
-  const socketRef = useRef(null);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
-    const socket = io(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000');
-    socketRef.current = socket;
+    if (!onEvent) return;
 
-    socket.on('connect', () => console.log('Socket connected'));
+    // Poll every 10 seconds instead of WebSocket
+    intervalRef.current = setInterval(() => {
+      onEvent('lead:updated', {});
+    }, 10000);
 
-    if (onEvent) {
-      const events = [
-        'lead:created', 'lead:updated', 'lead:deleted',
-        'lead:assigned', 'lead:assignment-changed',
-      ];
-      events.forEach((event) => socket.on(event, (data) => onEvent(event, data)));
-    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [onEvent]);
 
-    return () => socket.disconnect();
-  }, []);
-
-  return socketRef;
+  return intervalRef;
 }
