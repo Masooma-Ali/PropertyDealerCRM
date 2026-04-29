@@ -75,7 +75,7 @@ const LeadSchema = new mongoose.Schema(
 );
 
 // Auto-assign score based on budget (in millions PKR)
-LeadSchema.pre('save', function (next) {
+LeadSchema.pre('save', function () {
   if (this.isModified('budget')) {
     const budgetInMillions = this.budget / 1_000_000;
     if (budgetInMillions > 20) {
@@ -86,7 +86,6 @@ LeadSchema.pre('save', function (next) {
       this.score = 'Low';
     }
   }
-  next();
 });
 
 export default mongoose.models.Lead || mongoose.model('Lead', LeadSchema);

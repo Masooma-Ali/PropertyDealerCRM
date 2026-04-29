@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, use } from 'react';
 import { useLeads } from '@/hooks/useLeads';
 import LeadForm from '@/components/leads/LeadForm';
 import ActivityTimeline from '@/components/leads/ActivityTimeline';
@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 export default function AdminLeadDetailPage({ params }) {
+  const { id } = use(params);
   const { updateLead } = useLeads();
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -18,18 +19,18 @@ export default function AdminLeadDetailPage({ params }) {
   useEffect(() => {
     async function fetchLead() {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/leads/${params.id}`, {
+      const res = await fetch(`/api/leads/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (data.success) setLead(data.lead);
     }
-    fetchLead();
-  }, [params.id]);
+    if (id) fetchLead();
+  }, [id]);
 
   async function handleUpdate(formData) {
     setLoading(true);
-    const result = await updateLead(params.id, formData);
+    const result = await updateLead(id, formData);
     if (result.success) {
       toast.success('Lead updated!');
       setLead(result.lead);
@@ -54,7 +55,6 @@ export default function AdminLeadDetailPage({ params }) {
     <div>
       <Header title={lead.name} />
       <div className="p-6">
-        {/* Top info bar */}
         <div className="flex flex-wrap items-center gap-3 mb-6">
           <Badge label={lead.score} />
           <Badge label={lead.status} />
@@ -73,7 +73,6 @@ export default function AdminLeadDetailPage({ params }) {
           </span>
         </div>
 
-        {/* Tabs */}
         <div className="flex gap-1 mb-6 border-b border-gray-800">
           {['details', 'activity'].map((t) => (
             <button
@@ -97,7 +96,7 @@ export default function AdminLeadDetailPage({ params }) {
         ) : (
           <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-2xl">
             <h3 className="text-white font-semibold mb-4">Activity Log</h3>
-            <ActivityTimeline leadId={params.id} />
+            <ActivityTimeline leadId={id} />
           </div>
         )}
       </div>

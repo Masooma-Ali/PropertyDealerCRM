@@ -3,24 +3,33 @@ import { NextResponse } from 'next/server';
 
 export function withAuth(handler) {
   return async function (request, context) {
-    const token = getTokenFromRequest(request);
+    try {
+      const token = getTokenFromRequest(request);
 
-    if (!token) {
+      if (!token) {
+        return NextResponse.json(
+          { success: false, message: 'Authentication required' },
+          { status: 401 }
+        );
+      }
+
+      const decoded = verifyToken(token);
+      if (!decoded) {
+        return NextResponse.json(
+          { success: false, message: 'Invalid or expired token' },
+          { status: 401 }
+        );
+      }
+
+      // Attach user to request
+      request.user = decoded;
+      return handler(request, context);
+    } catch (error) {
+      console.error('Auth middleware error:', error);
       return NextResponse.json(
-        { success: false, message: 'Authentication required' },
+        { success: false, message: 'Authentication error' },
         { status: 401 }
       );
     }
-
-    const decoded = verifyToken(token);
-    if (!decoded) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid or expired token' },
-        { status: 401 }
-      );
-    }
-
-    request.user = decoded;
-    return handler(request, context);
   };
 }

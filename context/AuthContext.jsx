@@ -63,16 +63,15 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    //localStorage.removeItem('token');
-    //setUser(null);
-    //router.push('/login');
-     // Call backend to clear the cookie
-  await fetch('/api/auth/logout', { method: 'POST' });
+  try {
+    await fetch('/api/auth/logout', { method: 'POST' });
+  } catch {
+    // ignore network errors
+  }
   localStorage.removeItem('token');
   setUser(null);
   router.push('/login');
-  }
-
+}
   return (
     <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
       {children}

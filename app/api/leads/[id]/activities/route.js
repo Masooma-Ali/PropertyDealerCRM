@@ -7,14 +7,14 @@ import { withRateLimit } from '@/middleware/rateLimiter';
 
 async function getActivities(request, { params }) {
   try {
+    const { id } = await params;
     await connectDB();
 
-    const lead = await Lead.findById(params.id);
+    const lead = await Lead.findById(id);
     if (!lead) {
       return NextResponse.json({ success: false, message: 'Lead not found' }, { status: 404 });
     }
 
-    // Agents can only view activities for their leads
     if (
       request.user.role === 'agent' &&
       lead.assignedTo?.toString() !== request.user.id
@@ -22,7 +22,7 @@ async function getActivities(request, { params }) {
       return NextResponse.json({ success: false, message: 'Access denied' }, { status: 403 });
     }
 
-    const activities = await Activity.find({ lead: params.id })
+    const activities = await Activity.find({ lead: id })
       .populate('performedBy', 'name role')
       .sort({ createdAt: -1 });
 

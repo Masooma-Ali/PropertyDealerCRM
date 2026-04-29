@@ -122,16 +122,17 @@ export default function AgentDashboard() {
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-gray-500 text-xs">{lead.propertyInterest}</span>
                           {lead.phone && (
-                            <a
-                              href={`https://wa.me/${whatsappPhone}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="text-green-400 text-xs hover:text-green-300"
-                            >
-                              💬
-                            </a>
-                          )}
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(`https://wa.me/${whatsappPhone}`, '_blank');
+    }}
+    className="text-green-400 text-xs hover:text-green-300"
+  >
+    💬
+  </button>
+)}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-3">

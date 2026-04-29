@@ -2,14 +2,17 @@
 import { useState, useCallback } from 'react';
 
 function getToken() {
-  if (typeof window !== 'undefined') return localStorage.getItem('token');
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('token');
+  }
   return null;
 }
 
 function authHeaders() {
+  const token = getToken();
   return {
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${getToken()}`,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 }
 
