@@ -1,51 +1,61 @@
 export default function AgentPerformance({ data }) {
   if (!data || data.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 text-sm">
+      <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(229,234,245,0.3)', fontSize: '14px' }}>
         No agent data yet
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       {data.map((agent) => {
-        const closedRate = agent.totalAssigned > 0
-          ? Math.round((agent.closed / agent.totalAssigned) * 100)
-          : 0;
-
+        const rate = agent.totalAssigned > 0 ? Math.round((agent.closed / agent.totalAssigned) * 100) : 0;
         return (
-          <div key={agent._id} className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center font-bold text-sm border border-emerald-500/30">
+          <div key={agent._id} style={{
+            background: 'rgba(255,255,255,0.025)',
+            border: '1px solid rgba(160,210,235,0.08)',
+            borderRadius: '14px',
+            padding: '16px',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
+                  background: 'linear-gradient(135deg, #8459B3, #D0B0F4)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontWeight: '700', fontSize: '14px', color: 'white',
+                }}>
                   {agent.agentName?.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-white font-medium text-sm">{agent.agentName}</p>
-                  <p className="text-gray-500 text-xs">{agent.agentEmail}</p>
+                  <div style={{ color: 'white', fontWeight: '500', fontSize: '14px' }}>{agent.agentName}</div>
+                  <div style={{ color: 'rgba(160,210,235,0.45)', fontSize: '12px' }}>{agent.agentEmail}</div>
                 </div>
               </div>
-              <div className="text-right">
-                <span className="text-white font-bold text-lg">{agent.totalAssigned}</span>
-                <p className="text-gray-500 text-xs">total leads</p>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ color: 'white', fontWeight: '700', fontSize: '20px', fontFamily: 'Playfair Display, serif' }}>
+                  {agent.totalAssigned}
+                </div>
+                <div style={{ color: 'rgba(229,234,245,0.35)', fontSize: '11px' }}>total leads</div>
               </div>
             </div>
 
             {/* Progress bar */}
-            <div className="w-full bg-gray-700 rounded-full h-1.5 mb-2">
-              <div
-                className="bg-emerald-500 h-1.5 rounded-full transition-all duration-500"
-                style={{ width: `${closedRate}%` }}
-              />
+            <div style={{ background: 'rgba(255,255,255,0.06)', borderRadius: '999px', height: '4px', marginBottom: '10px' }}>
+              <div style={{
+                width: `${rate}%`, height: '4px', borderRadius: '999px',
+                background: 'linear-gradient(90deg, #8459B3, #A0D2EB)',
+                transition: 'width 0.6s ease',
+              }} />
             </div>
 
-            <div className="flex justify-between text-xs text-gray-500">
-              <span>{closedRate}% close rate</span>
-              <div className="flex gap-3">
-                <span className="text-blue-400">🔵 {agent.new} new</span>
-                <span className="text-orange-400">🟠 {agent.inProgress} active</span>
-                <span className="text-emerald-400">🟢 {agent.closed} closed</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+              <span style={{ color: 'rgba(229,234,245,0.4)' }}>{rate}% close rate</span>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <span style={{ color: '#A0D2EB' }}>{agent.new} new</span>
+                <span style={{ color: '#fb923c' }}>{agent.inProgress} active</span>
+                <span style={{ color: '#34d399' }}>{agent.closed} closed</span>
               </div>
             </div>
           </div>

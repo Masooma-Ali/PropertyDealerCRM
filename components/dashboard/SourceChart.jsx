@@ -1,51 +1,32 @@
 'use client';
-import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
-export default function SourceChart({ data }) {
-  if (!data || data.length === 0) {
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
     return (
-      <div className="flex items-center justify-center h-48 text-gray-500 text-sm">
-        No data available
+      <div style={{ background: '#1C1B27', border: '1px solid rgba(160,210,235,0.15)', borderRadius: '10px', padding: '10px 14px' }}>
+        <p style={{ color: 'white', fontWeight: '600', fontSize: '13px' }}>{label}</p>
+        <p style={{ color: '#A0D2EB', fontSize: '12px' }}>{payload[0].value} leads</p>
       </div>
     );
   }
+  return null;
+};
 
-  const chartData = data.map((item) => ({
-    name: item._id,
-    count: item.count,
-  }));
+export default function SourceChart({ data }) {
+  if (!data || data.length === 0) {
+    return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '220px', color: 'rgba(229,234,245,0.3)', fontSize: '14px' }}>No data available</div>;
+  }
+
+  const chartData = data.map(item => ({ name: item._id, count: item.count }));
 
   return (
-    <ResponsiveContainer width="100%" height={260}>
-      <BarChart data={chartData} barSize={36} layout="vertical">
-        <XAxis
-          type="number"
-          tick={{ fill: '#9ca3af', fontSize: 12 }}
-          axisLine={false}
-          tickLine={false}
-          allowDecimals={false}
-        />
-        <YAxis
-          type="category"
-          dataKey="name"
-          tick={{ fill: '#9ca3af', fontSize: 11 }}
-          axisLine={false}
-          tickLine={false}
-          width={90}
-        />
-        <Tooltip
-          contentStyle={{
-            background: '#111827',
-            border: '1px solid #374151',
-            borderRadius: '8px',
-            color: '#f9fafb',
-            fontSize: '13px',
-          }}
-          cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-        />
-        <Bar dataKey="count" fill="#10b981" radius={[0, 6, 6, 0]} />
+    <ResponsiveContainer width="100%" height={240}>
+      <BarChart data={chartData} barSize={28} layout="vertical">
+        <XAxis type="number" tick={{ fill: 'rgba(229,234,245,0.35)', fontSize: 11 }} axisLine={false} tickLine={false} allowDecimals={false} />
+        <YAxis type="category" dataKey="name" tick={{ fill: 'rgba(229,234,245,0.5)', fontSize: 11, fontFamily: 'Outfit' }} axisLine={false} tickLine={false} width={88} />
+        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+        <Bar dataKey="count" fill="#8459B3" radius={[0, 6, 6, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

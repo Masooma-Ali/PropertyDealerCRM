@@ -1,18 +1,30 @@
-export default function Badge({ label, type }) {
+export default function Badge({ label }) {
   const styles = {
-    High: 'bg-red-500/20 text-red-400 border border-red-500/30',
-    Medium: 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30',
-    Low: 'bg-green-500/20 text-green-400 border border-green-500/30',
-    New: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
-    Contacted: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
-    'In Progress': 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
-    Negotiation: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
-    Closed: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
-    Lost: 'bg-gray-500/20 text-gray-400 border border-gray-500/30',
+    High:          { bg: 'rgba(239,68,68,0.12)',    color: '#f87171',  border: 'rgba(239,68,68,0.25)' },
+    Medium:        { bg: 'rgba(245,158,11,0.12)',   color: '#fbbf24',  border: 'rgba(245,158,11,0.25)' },
+    Low:           { bg: 'rgba(16,185,129,0.12)',   color: '#34d399',  border: 'rgba(16,185,129,0.25)' },
+    New:           { bg: 'rgba(248,177,149,0.12)',  color: '#F8B195',  border: 'rgba(248,177,149,0.25)' },
+    Contacted:     { bg: 'rgba(192,108,132,0.12)',  color: '#d67fa0',  border: 'rgba(192,108,132,0.25)' },
+    'In Progress': { bg: 'rgba(246,114,128,0.12)',  color: '#f47d8a',  border: 'rgba(246,114,128,0.25)' },
+    Negotiation:   { bg: 'rgba(108,91,123,0.15)',   color: '#a07abf',  border: 'rgba(108,91,123,0.3)' },
+    Closed:        { bg: 'rgba(16,185,129,0.12)',   color: '#34d399',  border: 'rgba(16,185,129,0.25)' },
+    Lost:          { bg: 'rgba(73,77,95,0.28)',     color: 'rgba(240,232,224,0.38)', border: 'rgba(73,77,95,0.45)' },
   };
 
+  const s = styles[label] || { bg: 'rgba(73,77,95,0.28)', color: 'rgba(240,232,224,0.45)', border: 'rgba(73,77,95,0.45)' };
+
   return (
-    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${styles[label] || 'bg-gray-700 text-gray-300'}`}>
+    <span style={{
+      background: s.bg,
+      color: s.color,
+      border: `1px solid ${s.border}`,
+      borderRadius: '20px',
+      padding: '3px 10px',
+      fontSize: '11px',
+      fontWeight: '600',
+      letterSpacing: '0.03em',
+      whiteSpace: 'nowrap',
+    }}>
       {label}
     </span>
   );

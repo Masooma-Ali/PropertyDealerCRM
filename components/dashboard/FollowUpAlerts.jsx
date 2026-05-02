@@ -1,96 +1,80 @@
 'use client';
 import Link from 'next/link';
 
+function AlertItem({ lead, basePath, type }) {
+  const configs = {
+    overdue: { bg: 'rgba(239,68,68,0.07)', border: 'rgba(239,68,68,0.18)', dot: '#f87171', label: 'Overdue', labelStyle: { background: 'rgba(239,68,68,0.12)', color: '#f87171', border: '1px solid rgba(239,68,68,0.2)' }, dateColor: '#f87171' },
+    upcoming: { bg: 'rgba(245,158,11,0.07)', border: 'rgba(245,158,11,0.18)', dot: '#fbbf24', label: 'Soon', labelStyle: { background: 'rgba(245,158,11,0.12)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.2)' }, dateColor: '#fbbf24' },
+    stale: { bg: 'rgba(73,77,95,0.2)', border: 'rgba(73,77,95,0.35)', dot: 'rgba(229,234,245,0.3)', label: 'Stale', labelStyle: { background: 'rgba(73,77,95,0.3)', color: 'rgba(229,234,245,0.5)', border: '1px solid rgba(73,77,95,0.5)' }, dateColor: 'rgba(229,234,245,0.35)' },
+  };
+  const c = configs[type];
+
+  return (
+    <Link href={`${basePath}/${lead._id}`} style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      background: c.bg, border: `1px solid ${c.border}`, borderRadius: '10px',
+      padding: '10px 14px', textDecoration: 'none', transition: 'opacity 0.15s',
+    }}
+      onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+      onMouseLeave={e => e.currentTarget.style.opacity = '1'}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: c.dot, flexShrink: 0 }} />
+        <div>
+          <div style={{ color: 'white', fontSize: '13px', fontWeight: '500' }}>{lead.name}</div>
+          <div style={{ color: c.dateColor, fontSize: '11px', marginTop: '2px' }}>
+            {type === 'stale'
+              ? `Last active: ${new Date(lead.lastActivityAt).toLocaleDateString('en-PK')}`
+              : `Due: ${new Date(lead.followUpDate).toLocaleDateString('en-PK')}`}
+          </div>
+        </div>
+      </div>
+      <span style={{ ...c.labelStyle, borderRadius: '20px', padding: '2px 8px', fontSize: '10px', fontWeight: '600' }}>
+        {c.label}
+      </span>
+    </Link>
+  );
+}
+
 export default function FollowUpAlerts({ overdue = [], upcoming = [], stale = [], role = 'admin' }) {
   const basePath = `/${role}/leads`;
 
-  if (overdue.length === 0 && upcoming.length === 0 && stale.length === 0) {
+  if (!overdue.length && !upcoming.length && !stale.length) {
     return (
-      <div className="text-center py-6 text-gray-500 text-sm">
+      <div style={{ textAlign: 'center', padding: '32px 0', color: 'rgba(229,234,245,0.3)', fontSize: '14px' }}>
         ✅ No follow-up alerts right now
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {overdue.length > 0 && (
         <div>
-          <h4 className="text-red-400 font-semibold text-xs uppercase tracking-wider mb-2 flex items-center gap-2">
-            <span>🔴</span> Overdue Follow-ups ({overdue.length})
-          </h4>
-          <div className="space-y-2">
-            {overdue.slice(0, 5).map((lead) => (
-              <Link
-                key={lead._id}
-                href={`${basePath}/${lead._id}`}
-                className="flex items-center justify-between bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 hover:bg-red-500/20 transition group"
-              >
-                <div>
-                  <p className="text-white text-sm font-medium group-hover:text-red-300 transition">{lead.name}</p>
-                  <p className="text-red-400 text-xs">
-                    Due: {new Date(lead.followUpDate).toLocaleDateString('en-PK')}
-                  </p>
-                </div>
-                <span className="text-red-400 text-xs font-semibold px-2 py-0.5 bg-red-500/20 rounded-full">
-                  Overdue
-                </span>
-              </Link>
-            ))}
+          <div style={{ fontSize: '10px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#f87171', marginBottom: '8px' }}>
+            Overdue ({overdue.length})
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {overdue.slice(0, 4).map(l => <AlertItem key={l._id} lead={l} basePath={basePath} type="overdue" />)}
           </div>
         </div>
       )}
-
       {upcoming.length > 0 && (
         <div>
-          <h4 className="text-yellow-400 font-semibold text-xs uppercase tracking-wider mb-2 flex items-center gap-2">
-            <span>🟡</span> Upcoming Follow-ups ({upcoming.length})
-          </h4>
-          <div className="space-y-2">
-            {upcoming.slice(0, 5).map((lead) => (
-              <Link
-                key={lead._id}
-                href={`${basePath}/${lead._id}`}
-                className="flex items-center justify-between bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-2 hover:bg-yellow-500/20 transition group"
-              >
-                <div>
-                  <p className="text-white text-sm font-medium group-hover:text-yellow-300 transition">{lead.name}</p>
-                  <p className="text-yellow-400 text-xs">
-                    Due: {new Date(lead.followUpDate).toLocaleDateString('en-PK')}
-                  </p>
-                </div>
-                <span className="text-yellow-400 text-xs font-semibold px-2 py-0.5 bg-yellow-500/20 rounded-full">
-                  Soon
-                </span>
-              </Link>
-            ))}
+          <div style={{ fontSize: '10px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#fbbf24', marginBottom: '8px' }}>
+            Upcoming ({upcoming.length})
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {upcoming.slice(0, 4).map(l => <AlertItem key={l._id} lead={l} basePath={basePath} type="upcoming" />)}
           </div>
         </div>
       )}
-
       {stale.length > 0 && (
         <div>
-          <h4 className="text-gray-400 font-semibold text-xs uppercase tracking-wider mb-2 flex items-center gap-2">
-            <span>⚫</span> Stale Leads — No Activity 7d+ ({stale.length})
-          </h4>
-          <div className="space-y-2">
-            {stale.slice(0, 5).map((lead) => (
-              <Link
-                key={lead._id}
-                href={`${basePath}/${lead._id}`}
-                className="flex items-center justify-between bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 hover:bg-gray-700 transition group"
-              >
-                <div>
-                  <p className="text-white text-sm font-medium group-hover:text-gray-300 transition">{lead.name}</p>
-                  <p className="text-gray-500 text-xs">
-                    Last active: {new Date(lead.lastActivityAt).toLocaleDateString('en-PK')}
-                  </p>
-                </div>
-                <span className="text-gray-400 text-xs font-semibold px-2 py-0.5 bg-gray-700 rounded-full">
-                  Stale
-                </span>
-              </Link>
-            ))}
+          <div style={{ fontSize: '10px', fontWeight: '600', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(229,234,245,0.35)', marginBottom: '8px' }}>
+            Stale 7d+ ({stale.length})
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {stale.slice(0, 4).map(l => <AlertItem key={l._id} lead={l} basePath={basePath} type="stale" />)}
           </div>
         </div>
       )}
